@@ -1,10 +1,11 @@
 package main
 
 import (
+	"ardu-keys/services/COM"
 	"embed"
 	_ "embed"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -38,8 +39,9 @@ func main() {
 		Name:        "ardu-keys",
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
-			application.NewService(&GreetService{}),
+			// application.NewService(&GreetService{}),
 		},
+
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -67,10 +69,16 @@ func main() {
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
 	go func() {
+		comService := &COM.COMService{}
 		for {
-			now := time.Now().Format(time.RFC1123)
-			app.Event.Emit("time", now)
-			time.Sleep(time.Second)
+			data, err := comService.SendData()
+			if err != nil {
+				log.Println("COM error:", err)
+				// time.Sleep(time.Second)
+				continue
+			}
+			fmt.Println("Arduino:", data)
+			// time.Sleep(200 * time.Millisecond)
 		}
 	}()
 
