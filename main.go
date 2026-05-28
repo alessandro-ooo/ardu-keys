@@ -68,17 +68,29 @@ func main() {
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
+
+	comService := &COM.COMService{}
+	port, _ := comService.FindCOMPortAutomatically();
+
+	isConnectionEstablished := comService.ConnectToCOM(port)
+
+	// _, errs := comService.GetPorts();
+
+	// if errs != nil {
+	// 	log.Fatal("Error finding COM port:", errs)
+	// }
+
+
 	go func() {
-		comService := &COM.COMService{}
 		for {
-			data, err := comService.SendData()
-			if err != nil {
-				log.Println("COM error:", err)
-				// time.Sleep(time.Second)
-				continue
+			if (isConnectionEstablished) {
+				data := comService.ReadData();
+				hasData := len(data) > 0;
+
+				if(hasData) {
+					fmt.Println(data)
+				}
 			}
-			fmt.Println("Arduino:", data)
-			// time.Sleep(200 * time.Millisecond)
 		}
 	}()
 
