@@ -74,13 +74,6 @@ func main() {
 
 	isConnectionEstablished := comService.ConnectToCOM(port)
 
-	// _, errs := comService.GetPorts();
-
-	// if errs != nil {
-	// 	log.Fatal("Error finding COM port:", errs)
-	// }
-
-
 	go func() {
 		for {
 			if (isConnectionEstablished) {
