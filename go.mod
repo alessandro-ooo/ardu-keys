@@ -3,8 +3,8 @@ module ardu-keys
 go 1.25.0
 
 require (
-	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.95
+	go.bug.st/serial v1.7.1
 )
 
 require (
