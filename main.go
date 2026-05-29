@@ -1,10 +1,11 @@
 package main
 
 import (
+	"ardu-keys/services/COM"
+	"ardu-keys/services/settings"
 	"embed"
 	_ "embed"
 	"log"
-	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -29,6 +30,8 @@ func init() {
 // logs any error that might occur.
 func main() {
 
+	comService := &COM.COMService{};
+
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
@@ -38,8 +41,9 @@ func main() {
 		Name:        "ardu-keys",
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
-			application.NewService(&GreetService{}),
+			application.NewService(comService),
 		},
+
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -66,11 +70,23 @@ func main() {
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
+
+	settingsService := &settings.SettingsService{};
+
+	defaultSettings := settingsService.InitializeSettingsService();
+	hasSettings := settingsService.HasSettings();
+
+	if !hasSettings {
+		settingsService.SaveSettings(defaultSettings);
+	}
+
+	port, _ := comService.FindCOMPortAutomatically();
+
+	comService.ConnectToCOM(port);
+
 	go func() {
 		for {
-			now := time.Now().Format(time.RFC1123)
-			app.Event.Emit("time", now)
-			time.Sleep(time.Second)
+			comService.ReadData();
 		}
 	}()
 
