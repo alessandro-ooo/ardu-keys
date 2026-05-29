@@ -8,10 +8,32 @@ import (
 	"go.bug.st/serial/enumerator"
 )
 
+
 type COMService struct {
 	port   serial.Port
 	reader *bufio.Reader
+	isConnectionEstablished bool
+
+	portName string;
 }
+
+func (c *COMService) ListCOMPorts() []string {
+	ports, err := enumerator.GetDetailedPortsList();
+
+	if err != nil {
+		panic("[ERROR WHILE LISTING PORTS]: " + err.Error())
+	}
+
+	returnedPorts := []string{};
+
+	for _, port := range ports {
+		returnedPorts = append(returnedPorts, port.Name)
+	}
+
+	return returnedPorts;
+}
+
+func (c *COMService) GetCurrentCOMPortName() string { return c.portName }
 
 func (c *COMService) FindCOMPortAutomatically() (string, error) {
 	// This function will attempt to find the COM port that the Elegoo Uno R3 is connected to by checking the VID and PID of the connected devices.
@@ -38,32 +60,48 @@ func (c *COMService) FindCOMPortAutomatically() (string, error) {
 	return "", nil
 }
 
-func (c *COMService) ConnectToCOM(port string) bool {
+func (c *COMService) ConnectToCOM(port string) {
+
+	// reset connection state
+	c.isConnectionEstablished = false
+	c.reader = nil
+	c.port = nil
+
   mode := &serial.Mode{
        BaudRate: 250000,
   }
 
 	serialPort, err := serial.Open(port, mode);
 	c.port = serialPort;
+	c.portName = port;
 
 	if err != nil {
 		fmt.Printf("Failed to open %s: %v\n", port, err)
-		return false;
+		c.isConnectionEstablished = false;
+		return;
 	}
 
 	// Data must be buffered because it's sent in chunks (data is in streams).
 	reader := bufio.NewReader(serialPort)
 	c.reader = reader
-	return true
+	c.isConnectionEstablished = true;
 }
 
-func (c *COMService) ReadData() (string) {
-	line, _ := c.reader.ReadString('\n')
-	return line
+func (c *COMService) ReadData() {
+	if c.isConnectionEstablished {
+		line, _ := c.reader.ReadString('\n');
+		
+		hasData := len(line) > 0;
+
+		if hasData {
+			fmt.Println(line);
+		}
+	}
 }
 
-func (c *COMService) Close() error {
+func (c *COMService) CloseConnection() error {
 	if c.port != nil {
+		c.isConnectionEstablished = false;
 		return c.port.Close()
 	}
 	return nil
