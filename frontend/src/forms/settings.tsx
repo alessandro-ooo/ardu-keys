@@ -20,7 +20,6 @@ const SettingsForm = ({ data }: SettingsProps) => {
 
   const onSubmit: SubmitHandler<FormInputs> = () => {
     const selectedPort = getValues("ports");
-    console.log(selectedPort);
 
     CloseConnection();
     ConnectToCOM(selectedPort.toString());
