@@ -2,6 +2,7 @@ package main
 
 import (
 	"ardu-keys/services/COM"
+	"ardu-keys/services/automation"
 	"ardu-keys/services/settings"
 	"embed"
 	_ "embed"
@@ -31,7 +32,7 @@ func init() {
 func main() {
 
 	comService := &COM.COMService{};
-
+	automationService := &automation.AutomationService{};
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
@@ -42,6 +43,7 @@ func main() {
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
 			application.NewService(comService),
+			application.NewService(automationService),
 		},
 
 		Assets: application.AssetOptions{
@@ -83,6 +85,8 @@ func main() {
 	port, _ := comService.FindCOMPortAutomatically();
 
 	comService.ConnectToCOM(port);
+	automationService.Run();
+
 
 	go func() {
 		for {
