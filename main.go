@@ -6,8 +6,10 @@ import (
 	"ardu-keys/services/settings"
 	"embed"
 	_ "embed"
+	"fmt"
 	"log"
 
+	hook "github.com/robotn/gohook"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -29,6 +31,23 @@ func init() {
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
+
+func startHook() {
+    fmt.Println("starting hook...")
+
+    hook.Register(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
+        fmt.Println("ctrl-shift-q")
+        hook.End()
+    })
+
+    hook.Register(hook.KeyDown, []string{"w"}, func(e hook.Event) {
+        fmt.Println("w")
+    })
+
+    s := hook.Start()
+    <-hook.Process(s)
+}
+
 func main() {
 
 	comService := &COM.COMService{};
@@ -78,21 +97,35 @@ func main() {
 	defaultSettings := settingsService.InitializeSettingsService();
 	hasSettings := settingsService.HasSettings();
 
+	fmt.Printf("HAS SETTINGS: %v", hasSettings)
+
 	if !hasSettings {
 		settingsService.SaveSettings(defaultSettings);
 	}
 
 	port, _ := comService.FindCOMPortAutomatically();
 
+	fmt.Print("PORT FOUND")
+
 	comService.ConnectToCOM(port);
-	automationService.Run();
 
+	fmt.Print("CONNECTED")
 
-	go func() {
-		for {
-			comService.ReadData();
-		}
-	}()
+	// TODO: THIS IS BLOCKING!
+	// settings, settingsErr := settingsService.GetSettings();
+
+	// fmt.Printf("SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE loaded: %v", settings)
+
+	// if settingsErr == nil {
+
+		go func() {
+			for {
+				comService.ReadData("enter", "enter", "enter", "enter");
+			}
+		}()
+	// }
+
+	// automationService.HookEvents(settings.D2, settings.D3, settings.D4, settings.D5);
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()
