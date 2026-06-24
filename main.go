@@ -45,7 +45,6 @@ func main() {
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
 			application.NewService(comService),
-			application.NewService(automationService),
 		},
 
 		Assets: application.AssetOptions{
