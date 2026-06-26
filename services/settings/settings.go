@@ -18,10 +18,10 @@ type JSONSettings struct {
 }
 
 var defaultData = JSONSettings {
-    D2: "0",
-    D3: "0",
-    D4: "0",
-    D5: "0",
+    D2: "f13",
+    D3: "f14",
+    D4: "f15",
+    D5: "f16",
 }
 
 func (s* SettingsService) InitializeSettingsService() string {
@@ -30,12 +30,12 @@ func (s* SettingsService) InitializeSettingsService() string {
 	return string(json);
 }
 
-func (s *SettingsService) GetSettings() string {
+func (s *SettingsService) GetSettings() (JSONSettings, error) {
 	homeDir, err := os.UserHomeDir();
 
 	if err != nil {
 		fmt.Println("Error getting user home directory:", err);
-		return "";
+		return JSONSettings{}, err;
 	}
 
 	dir := filepath.Join(homeDir, "Documents", "ardukeys");
@@ -44,10 +44,16 @@ func (s *SettingsService) GetSettings() string {
 
 	if err != nil {
 		fmt.Println("Error reading settings file:", err);
-		return "";
+		return JSONSettings{}, err;
 	}
 
-	return string(data);
+	var settings JSONSettings;
+	if err := json.Unmarshal(data, &settings); err != nil {
+		fmt.Println("Error unmarshalling settings:", err);
+		return JSONSettings{}, err;
+	}
+
+	return settings, nil;
 }
 
 func (s *SettingsService) SaveSettings(data string) error {
@@ -69,6 +75,10 @@ func (s *SettingsService) SaveSettings(data string) error {
 func (s *SettingsService) HasSettings() bool {
 	// For whatever reason is possible that the user doesn't have the json saved in his documents.
 
-	hasSettings := len(s.GetSettings()) > 0;
-	return hasSettings;
+	_, err := s.GetSettings();
+	if err != nil {
+		return false;
+	}
+
+	return true;
 }

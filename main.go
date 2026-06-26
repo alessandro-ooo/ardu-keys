@@ -2,6 +2,7 @@ package main
 
 import (
 	"ardu-keys/services/COM"
+	"ardu-keys/services/automation"
 	"ardu-keys/services/settings"
 	"embed"
 	_ "embed"
@@ -28,10 +29,10 @@ func init() {
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
+
 func main() {
-
 	comService := &COM.COMService{};
-
+	automationService := &automation.AutomationService{};
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
@@ -70,25 +71,34 @@ func main() {
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
-
 	settingsService := &settings.SettingsService{};
 
+	// this checks if the user has settings.
 	defaultSettings := settingsService.InitializeSettingsService();
 	hasSettings := settingsService.HasSettings();
 
 	if !hasSettings {
+		// if no settings, then save the default settings to the user's documents.
 		settingsService.SaveSettings(defaultSettings);
 	}
 
+	// this will find a COM port, more doc in the function.
 	port, _ := comService.FindCOMPortAutomatically();
-
 	comService.ConnectToCOM(port);
 
-	go func() {
-		for {
-			comService.ReadData();
-		}
-	}()
+	// this gets the settings. 
+	settings, settingsErr := settingsService.GetSettings();
+
+	if settingsErr == nil {
+		automationService.HookEvents(settings.D2, settings.D3, settings.D4, settings.D5);
+
+		// TODO: must handle in case of error
+		go func() {
+			for {
+				comService.ReadData(settings.D2, settings.D3, settings.D4, settings.D5);
+			}
+		}()
+	}
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()

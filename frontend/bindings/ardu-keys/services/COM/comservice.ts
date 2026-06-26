@@ -27,8 +27,8 @@ export function ListCOMPorts(): $CancellablePromise<string[]> {
     });
 }
 
-export function ReadData(): $CancellablePromise<void> {
-    return $Call.ByID(3075083751);
+export function ReadData(d2: string, d3: string, d4: string, d5: string): $CancellablePromise<void> {
+    return $Call.ByID(3075083751, d2, d3, d4, d5);
 }
 
 // Private type creation functions

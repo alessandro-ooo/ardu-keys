@@ -3,7 +3,9 @@ package COM
 import (
 	"bufio"
 	"fmt"
+	"strings"
 
+	"github.com/go-vgo/robotgo"
 	"go.bug.st/serial"
 	"go.bug.st/serial/enumerator"
 )
@@ -87,14 +89,25 @@ func (c *COMService) ConnectToCOM(port string) {
 	c.isConnectionEstablished = true;
 }
 
-func (c *COMService) ReadData() {
+func (c *COMService) ReadData(d2, d3, d4, d5 string) {
 	if c.isConnectionEstablished {
 		line, _ := c.reader.ReadString('\n');
 		
 		hasData := len(line) > 0;
 
 		if hasData {
-			fmt.Println(line);
+			if strings.Contains(line, "D2") {
+				robotgo.KeyTap(d2)
+			}
+			if strings.Contains(line, "D3") {
+				robotgo.KeyTap(d3)
+			}
+			if strings.Contains(line, "D4") {
+				robotgo.KeyTap(d4)
+			}
+			if strings.Contains(line, "D5") {
+				robotgo.KeyTap(d5)
+			}
 		}
 	}
 }
