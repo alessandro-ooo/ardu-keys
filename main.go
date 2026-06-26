@@ -6,7 +6,6 @@ import (
 	"ardu-keys/services/settings"
 	"embed"
 	_ "embed"
-	"fmt"
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -32,7 +31,6 @@ func init() {
 // logs any error that might occur.
 
 func main() {
-	fmt.Println("HERE 1")
 	comService := &COM.COMService{};
 	automationService := &automation.AutomationService{};
 	// Create a new Wails application by providing the necessary options.
