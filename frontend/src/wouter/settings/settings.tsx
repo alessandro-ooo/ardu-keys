@@ -3,6 +3,7 @@ import {
   ListCOMPorts,
   GetCurrentCOMPortName,
 } from "../../../bindings/ardu-keys/services/COM/comservice";
+import { GetSettings } from "../../../bindings/ardu-keys/services/settings/settingsservice";
 import SettingsForm from "../../forms/settings";
 
 const Settings = () => {
@@ -11,14 +12,16 @@ const Settings = () => {
     queryFn: async () => {
       const ports = await ListCOMPorts();
       const currentCOMPort = await GetCurrentCOMPortName();
-      return { ports, currentCOMPort };
+
+      const kbdInputs = await GetSettings();
+      return { ports, currentCOMPort, kbdInputs };
     },
   });
 
   const hasFetched = portsStatus === "success";
 
   return (
-    <div>
+    <div className="">
       {!hasFetched && <p>Loading...</p>}
       {hasFetched && <SettingsForm data={ports} />}
     </div>

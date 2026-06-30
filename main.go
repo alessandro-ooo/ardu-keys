@@ -33,6 +33,7 @@ func init() {
 func main() {
 	comService := &COM.COMService{};
 	automationService := &automation.AutomationService{};
+	settingsService := &settings.SettingsService{};
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
@@ -43,6 +44,7 @@ func main() {
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
 			application.NewService(comService),
+			application.NewService(settingsService),
 		},
 
 		Assets: application.AssetOptions{
@@ -71,7 +73,6 @@ func main() {
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
-	settingsService := &settings.SettingsService{};
 
 	// this checks if the user has settings.
 	defaultSettings := settingsService.InitializeSettingsService();
