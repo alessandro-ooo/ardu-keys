@@ -7,6 +7,7 @@ import (
 	"embed"
 	_ "embed"
 	"log"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -62,6 +63,8 @@ func main() {
 	// 'URL' is the URL that will be loaded into the webview.
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "Window 1",
+		Width: 800,
+		Height: 200,
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
@@ -92,7 +95,6 @@ func main() {
 
 	if settingsErr == nil {
 		automationService.HookEvents(settings.D2, settings.D3, settings.D4, settings.D5);
-
 		// TODO: must handle in case of error
 		go func() {
 			for {
@@ -100,6 +102,16 @@ func main() {
 			}
 		}()
 	}
+
+	// this routine emits the connection status to the frontend
+  go func() {
+  	ticker := time.NewTicker(1 * time.Second)
+    defer ticker.Stop()
+
+		for range ticker.C {
+			app.Event.Emit("com:isConnectionEstablished", comService.IsConnectionEstablished())
+    }
+  }()
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()
