@@ -1,4 +1,4 @@
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler, type Path } from "react-hook-form";
 import {
   CloseConnection,
   ConnectToCOM,
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Events } from "@wailsio/runtime";
 import { useState } from "react";
 import Bulb from "@/components/custom/bulb";
+import Dialog from "@/components/custom/dialog";
 
 type FormInputs = {
   ports: string[];
@@ -21,7 +22,15 @@ type SettingsProps = {
 };
 
 const SettingsForm = ({ data }: SettingsProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingKey, setEditingKey] = useState<keyof JSONSettings | null>(null);
   const [isConnectionEstablished, setIsConnectionEstablished] = useState(false);
+
+  const showDialog = editingKey !== null;
+
+  const kbdEntries = Object.entries(data.kbdInputs) as Array<
+    [keyof JSONSettings, string]
+  >;
 
   Events.On("com:isConnectionEstablished", (event) => {
     setIsConnectionEstablished(event.data);
@@ -41,7 +50,10 @@ const SettingsForm = ({ data }: SettingsProps) => {
 
   console.log("Current COM port:", data.currentCOMPort);
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 p-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-16 p-4"
+    >
       <div className="flex flex-row justify-between">
         <div className="flex flex-col">
           <div className="flex flex-row gap-2 items-center">
@@ -52,14 +64,49 @@ const SettingsForm = ({ data }: SettingsProps) => {
         </div>
 
         <div>
-          <Button variant="default">Modifica associazione</Button>
+          {!isEditing && (
+            <Button variant="default" onClick={() => setIsEditing(true)}>
+              Modifica associazione
+            </Button>
+          )}
+
+          {isEditing && (
+            <div className="flex flex-row gap-2">
+              <Button
+                variant="default"
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditingKey(null);
+                }}
+              >
+                Salva modifiche
+              </Button>
+
+              <Button
+                variant="default"
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditingKey(null);
+                }}
+              >
+                Annulla modifiche
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="flex flex-row gap-7 items-center justify-center">
-        {Object.entries(data.kbdInputs).map(([key, value]) => (
+        {kbdEntries.map(([key, value]) => (
           <div className="flex flex-col gap-2 items-center text-white">
-            <KBD kbdName={value} digital={key} />
+            <KBD
+              kbdName={value}
+              digital={key}
+              clickable={isEditing}
+              onClick={(digital) =>
+                setEditingKey(digital as keyof JSONSettings)
+              }
+            />
           </div>
         ))}
       </div>
@@ -74,6 +121,24 @@ const SettingsForm = ({ data }: SettingsProps) => {
         ))}
       </select>
       <input type="submit" className="hidden" />
+
+      <Dialog
+        setIsOpen={() => {
+          setEditingKey(null);
+        }}
+        isOpen={showDialog}
+        title="Settings"
+        description={`Configura il tasto ${editingKey}`}
+        content={
+          editingKey ? (
+            <div className="flex flex-col gap-4">
+              <input
+                {...register(`kbdInputs.${editingKey}` as Path<FormInputs>)}
+              />
+            </div>
+          ) : null
+        }
+      />
     </form>
   );
 };
