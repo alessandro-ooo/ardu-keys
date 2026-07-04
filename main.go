@@ -2,7 +2,6 @@ package main
 
 import (
 	"ardu-keys/services/COM"
-	"ardu-keys/services/automation"
 	"ardu-keys/services/settings"
 	"embed"
 	_ "embed"
@@ -33,7 +32,6 @@ func init() {
 
 func main() {
 	comService := &COM.COMService{};
-	automationService := &automation.AutomationService{};
 	settingsService := &settings.SettingsService{};
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
@@ -94,7 +92,6 @@ func main() {
 	settings, settingsErr := settingsService.GetSettings();
 
 	if settingsErr == nil {
-		automationService.HookEvents(settings.D2, settings.D3, settings.D4, settings.D5);
 		// TODO: must handle in case of error
 		go func() {
 			for {
