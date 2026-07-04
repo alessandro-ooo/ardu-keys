@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-vgo/robotgo"
+	// "github.com/go-vgo/robotgo"
+	robotgo "github.com/leaanthony/robot-nocgo"
 	"go.bug.st/serial"
 	"go.bug.st/serial/enumerator"
 )
