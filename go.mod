@@ -3,7 +3,7 @@ module ardu-keys
 go 1.25.0
 
 require (
-	github.com/go-vgo/robotgo v1.0.2
+	github.com/leaanthony/robot-nocgo v0.0.0-20260704112916-660d87bf0c7a
 	github.com/robotn/gohook v0.42.3
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.95
 	go.bug.st/serial v1.7.1
@@ -38,7 +38,7 @@ require (
 	github.com/leaanthony/go-ansi-parser v1.6.1 // indirect
 	github.com/leaanthony/u v1.1.1 // indirect
 	github.com/lmittmann/tint v1.1.2 // indirect
-	github.com/lufia/plan9stats v0.0.0-20260324052639-156f7da3f749 // indirect
+	github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/onsi/gomega v1.41.0 // indirect
@@ -49,14 +49,15 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/samber/lo v1.52.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
-	github.com/shirou/gopsutil/v4 v4.26.2 // indirect
+	github.com/shirou/gopsutil/v4 v4.26.3 // indirect
 	github.com/skeema/knownhosts v1.3.2 // indirect
 	github.com/tailscale/win v0.0.0-20250627215312-f4da2b8ee071 // indirect
 	github.com/tklauser/go-sysconf v0.3.16 // indirect
 	github.com/tklauser/numcpus v0.11.0 // indirect
-	github.com/vcaesar/gops v0.41.0 // indirect
-	github.com/vcaesar/imgo v0.41.0 // indirect
-	github.com/vcaesar/keycode v0.10.1 // indirect
+	github.com/vcaesar/go-wayland v0.40.0 // indirect
+	github.com/vcaesar/gops v0.42.0 // indirect
+	github.com/vcaesar/imgo v0.42.0 // indirect
+	github.com/vcaesar/keycode v0.20.0 // indirect
 	github.com/vcaesar/screenshot v0.11.1 // indirect
 	github.com/vcaesar/tt v0.30.0 // indirect
 	github.com/wailsapp/wails/webview2 v1.0.24 // indirect
