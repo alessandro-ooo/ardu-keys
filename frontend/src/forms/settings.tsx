@@ -1,4 +1,4 @@
-import { useForm, type SubmitHandler, type Path } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import {
   CloseConnection,
   ConnectToCOM,
@@ -10,6 +10,14 @@ import { Events } from "@wailsio/runtime";
 import { useState } from "react";
 import Bulb from "@/components/custom/bulb";
 import Dialog from "@/components/custom/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { availableKeys } from "@/lib/keys.ts";
 
 type FormInputs = {
   ports: string[];
@@ -23,22 +31,23 @@ type SettingsProps = {
 
 const SettingsForm = ({ data }: SettingsProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editingKey, setEditingKey] = useState<keyof JSONSettings | null>(null);
+  const [editingKey, setEditingKey] = useState<
+    "kbdInputs.D2" | "kbdInputs.D3" | "kbdInputs.D4" | "kbdInputs.D5" | null
+  >(null);
   const [isConnectionEstablished, setIsConnectionEstablished] = useState(false);
 
   const showDialog = editingKey !== null;
-
-  const kbdEntries = Object.entries(data.kbdInputs) as Array<
-    [keyof JSONSettings, string]
-  >;
 
   Events.On("com:isConnectionEstablished", (event) => {
     setIsConnectionEstablished(event.data);
   });
 
-  const { register, handleSubmit, getValues, setValue } = useForm<FormInputs>({
-    defaultValues: { ...data },
-  });
+  const { register, handleSubmit, getValues, setValue, reset, watch } =
+    useForm<FormInputs>({
+      defaultValues: { ...data },
+    });
+
+  console.log(watch());
 
   const onSubmit: SubmitHandler<FormInputs> = () => {
     const selectedPort = getValues("ports");
@@ -73,6 +82,7 @@ const SettingsForm = ({ data }: SettingsProps) => {
           {isEditing && (
             <div className="flex flex-row gap-2">
               <Button
+                type="button"
                 variant="default"
                 onClick={() => {
                   setIsEditing(false);
@@ -83,10 +93,13 @@ const SettingsForm = ({ data }: SettingsProps) => {
               </Button>
 
               <Button
+                type="button"
                 variant="default"
                 onClick={() => {
+                  reset(data);
                   setIsEditing(false);
                   setEditingKey(null);
+                  console.log("hi");
                 }}
               >
                 Annulla modifiche
@@ -97,18 +110,30 @@ const SettingsForm = ({ data }: SettingsProps) => {
       </div>
 
       <div className="flex flex-row gap-7 items-center justify-center">
-        {kbdEntries.map(([key, value]) => (
-          <div className="flex flex-col gap-2 items-center text-white">
-            <KBD
-              kbdName={value}
-              digital={key}
-              clickable={isEditing}
-              onClick={(digital) =>
-                setEditingKey(digital as keyof JSONSettings)
-              }
-            />
-          </div>
-        ))}
+        <KBD
+          digital={"D2"}
+          kbdName={getValues("kbdInputs.D2")}
+          clickable={isEditing}
+          onClick={() => setEditingKey("kbdInputs.D2")}
+        />
+        <KBD
+          digital={"D3"}
+          kbdName={getValues("kbdInputs.D3")}
+          clickable={isEditing}
+          onClick={() => setEditingKey("kbdInputs.D3")}
+        />
+        <KBD
+          digital={"D4"}
+          kbdName={getValues("kbdInputs.D4")}
+          clickable={isEditing}
+          onClick={() => setEditingKey("kbdInputs.D4")}
+        />
+        <KBD
+          digital={"D5"}
+          kbdName={getValues("kbdInputs.D5")}
+          clickable={isEditing}
+          onClick={() => setEditingKey("kbdInputs.D5")}
+        />
       </div>
 
       <div className="border border-zinc-700 w-full hidden" />
@@ -123,18 +148,39 @@ const SettingsForm = ({ data }: SettingsProps) => {
       <input type="submit" className="hidden" />
 
       <Dialog
-        setIsOpen={() => {
-          setEditingKey(null);
-        }}
         isOpen={showDialog}
         title="Settings"
         description={`Configura il tasto ${editingKey}`}
         content={
           editingKey ? (
             <div className="flex flex-col gap-4">
-              <input
-                {...register(`kbdInputs.${editingKey}` as Path<FormInputs>)}
-              />
+              <Select
+                onValueChange={(value) =>
+                  setValue(editingKey, value, {
+                    shouldDirty: true,
+                    shouldTouch: true,
+                    shouldValidate: true,
+                  })
+                }
+                defaultValue={getValues(editingKey)}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Theme" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableKeys.map((key, index) => (
+                    <SelectItem key={index} value={key}>
+                      {key}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex flex-row gap-2">
+                <Button variant="default" onClick={() => setEditingKey(null)}>
+                  Chiudi
+                </Button>
+              </div>
             </div>
           ) : null
         }

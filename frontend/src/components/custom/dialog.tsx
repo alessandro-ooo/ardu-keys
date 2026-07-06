@@ -5,7 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogClose,
+  // DialogClose,
 } from "../ui/dialog";
 
 type dialogProps = {
@@ -13,19 +13,12 @@ type dialogProps = {
   description: string;
   isOpen?: boolean;
   content: ReactNode;
-  setIsOpen: () => void;
 };
 
-const Dialog = ({
-  isOpen,
-  title,
-  description,
-  content,
-  setIsOpen,
-}: dialogProps) => {
+const Dialog = ({ isOpen, title, description, content }: dialogProps) => {
   return (
-    <ShadcnDialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogClose onClick={() => setIsOpen()} />
+    <ShadcnDialog open={isOpen} onOpenChange={() => {}}>
+      {/* <DialogClose} /> */}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
