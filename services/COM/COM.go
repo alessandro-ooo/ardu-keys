@@ -120,3 +120,9 @@ func (c *COMService) CloseConnection() error {
 	}
 	return nil
 }
+
+func (c *COMService) IsConnectionEstablished() bool {
+	return c.isConnectionEstablished;
+}
+
+

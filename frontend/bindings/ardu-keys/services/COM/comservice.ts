@@ -21,6 +21,10 @@ export function GetCurrentCOMPortName(): $CancellablePromise<string> {
     return $Call.ByID(3037295383);
 }
 
+export function IsConnectionEstablished(): $CancellablePromise<boolean> {
+    return $Call.ByID(3536961935);
+}
+
 export function ListCOMPorts(): $CancellablePromise<string[]> {
     return $Call.ByID(3808457656).then(($result: any) => {
         return $$createType0($result);

@@ -2,11 +2,11 @@ package main
 
 import (
 	"ardu-keys/services/COM"
-	"ardu-keys/services/automation"
 	"ardu-keys/services/settings"
 	"embed"
 	_ "embed"
 	"log"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -32,7 +32,7 @@ func init() {
 
 func main() {
 	comService := &COM.COMService{};
-	automationService := &automation.AutomationService{};
+	settingsService := &settings.SettingsService{};
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
@@ -43,6 +43,7 @@ func main() {
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
 			application.NewService(comService),
+			application.NewService(settingsService),
 		},
 
 		Assets: application.AssetOptions{
@@ -60,6 +61,8 @@ func main() {
 	// 'URL' is the URL that will be loaded into the webview.
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "Window 1",
+		Width: 800,
+		Height: 350,
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
@@ -71,7 +74,6 @@ func main() {
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
-	settingsService := &settings.SettingsService{};
 
 	// this checks if the user has settings.
 	defaultSettings := settingsService.InitializeSettingsService();
@@ -90,8 +92,6 @@ func main() {
 	settings, settingsErr := settingsService.GetSettings();
 
 	if settingsErr == nil {
-		automationService.HookEvents(settings.D2, settings.D3, settings.D4, settings.D5);
-
 		// TODO: must handle in case of error
 		go func() {
 			for {
@@ -99,6 +99,16 @@ func main() {
 			}
 		}()
 	}
+
+	// this routine emits the connection status to the frontend
+  go func() {
+  	ticker := time.NewTicker(1 * time.Second)
+    defer ticker.Stop()
+
+		for range ticker.C {
+			app.Event.Emit("com:isConnectionEstablished", comService.IsConnectionEstablished())
+    }
+  }()
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()

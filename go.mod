@@ -4,7 +4,6 @@ go 1.25.0
 
 require (
 	github.com/leaanthony/robot-nocgo v0.0.0-20260704112916-660d87bf0c7a
-	github.com/robotn/gohook v0.42.3
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.95
 	go.bug.st/serial v1.7.1
 )
