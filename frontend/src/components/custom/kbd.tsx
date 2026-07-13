@@ -12,10 +12,11 @@ const KBD = ({ kbdName, digital, clickable, onClick }: KBDProps) => {
     <button
       type="button"
       className={cn(
-        "h-15 w-15 rounded-md bg-linear-to-tl from-zinc-800 to-zinc-700 flex pt-1 pl-1 pb-2 pr-2 text-xs",
-        clickable && "cursor-pointer",
-        // "active:h-13 active:w-13" <- "pressed" effect, TODO: gonna handle it with the board
+        "h-15 w-15 rounded-md bg-linear-to-tl from-zinc-800 to-zinc-700 flex pt-1 pl-1 pb-2 pr-2 text-xs text-white",
+        clickable &&
+          "cursor-pointer ring-2 ring-amber-400/80 ring-offset-2 ring-offset-zinc-900",
       )}
+      disabled={!clickable}
       onClick={() => onClick && onClick(digital)}
     >
       <div className="bg-linear-to-r from-zinc-800 to-zinc-600 h-full w-full rounded-md pt-2 flex justify-center shadow-[inset_0_-3px_0_0_rgba(255,255,255,0.05),inset_0_1px_0_0_rgba(0,0,0,0.4)]">

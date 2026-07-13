@@ -3,6 +3,7 @@ import {
   CloseConnection,
   ConnectToCOM,
 } from "../../bindings/ardu-keys/services/COM/comservice";
+import { SaveSettings } from "../../bindings/ardu-keys/services/settings/settingsservice";
 import type { JSONSettings } from "bindings/ardu-keys/services/settings/models";
 import KBD from "@/components/custom/kbd";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { availableKeys } from "@/lib/keys.ts";
+import { useMutation } from "@tanstack/react-query";
 
 type FormInputs = {
   ports: string[];
@@ -42,22 +44,27 @@ const SettingsForm = ({ data }: SettingsProps) => {
     setIsConnectionEstablished(event.data);
   });
 
-  const { register, handleSubmit, getValues, setValue, reset, watch } =
-    useForm<FormInputs>({
-      defaultValues: { ...data },
-    });
+  const { handleSubmit, getValues, setValue, reset } = useForm<FormInputs>({
+    defaultValues: { ...data },
+  });
 
-  console.log(watch());
+  const saveSettings = useMutation({
+    mutationFn: async (data: string) => {
+      await SaveSettings(data);
+    },
+  });
 
-  const onSubmit: SubmitHandler<FormInputs> = () => {
+  const onSubmit: SubmitHandler<FormInputs> = (data) => {
+    setIsEditing(false);
+    setEditingKey(null);
     const selectedPort = getValues("ports");
 
     CloseConnection();
     setValue("currentCOMPort", selectedPort.toString());
     ConnectToCOM(selectedPort.toString());
+    saveSettings.mutateAsync(JSON.stringify(data.kbdInputs));
   };
 
-  console.log("Current COM port:", data.currentCOMPort);
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -81,14 +88,7 @@ const SettingsForm = ({ data }: SettingsProps) => {
 
           {isEditing && (
             <div className="flex flex-row gap-2">
-              <Button
-                type="button"
-                variant="default"
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditingKey(null);
-                }}
-              >
+              <Button type="submit" variant="default">
                 Salva modifiche
               </Button>
 
@@ -99,7 +99,6 @@ const SettingsForm = ({ data }: SettingsProps) => {
                   reset(data);
                   setIsEditing(false);
                   setEditingKey(null);
-                  console.log("hi");
                 }}
               >
                 Annulla modifiche
@@ -109,43 +108,56 @@ const SettingsForm = ({ data }: SettingsProps) => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-7 items-center justify-center">
-        <KBD
-          digital={"D2"}
-          kbdName={getValues("kbdInputs.D2")}
-          clickable={isEditing}
-          onClick={() => setEditingKey("kbdInputs.D2")}
-        />
-        <KBD
-          digital={"D3"}
-          kbdName={getValues("kbdInputs.D3")}
-          clickable={isEditing}
-          onClick={() => setEditingKey("kbdInputs.D3")}
-        />
-        <KBD
-          digital={"D4"}
-          kbdName={getValues("kbdInputs.D4")}
-          clickable={isEditing}
-          onClick={() => setEditingKey("kbdInputs.D4")}
-        />
-        <KBD
-          digital={"D5"}
-          kbdName={getValues("kbdInputs.D5")}
-          clickable={isEditing}
-          onClick={() => setEditingKey("kbdInputs.D5")}
-        />
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-row gap-7 items-center justify-center">
+          <KBD
+            digital={"D2"}
+            kbdName={getValues("kbdInputs.D2")}
+            clickable={isEditing}
+            onClick={() => setEditingKey("kbdInputs.D2")}
+          />
+          <KBD
+            digital={"D3"}
+            kbdName={getValues("kbdInputs.D3")}
+            clickable={isEditing}
+            onClick={() => setEditingKey("kbdInputs.D3")}
+          />
+          <KBD
+            digital={"D4"}
+            kbdName={getValues("kbdInputs.D4")}
+            clickable={isEditing}
+            onClick={() => setEditingKey("kbdInputs.D4")}
+          />
+          <KBD
+            digital={"D5"}
+            kbdName={getValues("kbdInputs.D5")}
+            clickable={isEditing}
+            onClick={() => setEditingKey("kbdInputs.D5")}
+          />
+        </div>
+
+        <div className="flex flex-row gap-2 w-full items-center justify-center text-white">
+          <p>COM:</p> {!isEditing && <p>{getValues("currentCOMPort")}</p>}
+          {isEditing && (
+            <Select
+              onValueChange={(value) => {
+                setValue("currentCOMPort", value);
+              }}
+            >
+              <SelectTrigger className="w-45">
+                <SelectValue placeholder="COM" />
+              </SelectTrigger>
+              <SelectContent className="max-h-52 h-52 text-white">
+                {data.ports.map((port, index) => (
+                  <SelectItem className="text-white" key={index} value={port}>
+                    {port}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </div>
-
-      <div className="border border-zinc-700 w-full hidden" />
-
-      <select {...register("ports")} className="hidden">
-        {data.ports.map((port, index) => (
-          <option key={index} value={port}>
-            {port}
-          </option>
-        ))}
-      </select>
-      <input type="submit" className="hidden" />
 
       <Dialog
         isOpen={showDialog}
@@ -164,10 +176,10 @@ const SettingsForm = ({ data }: SettingsProps) => {
                 }
                 defaultValue={getValues(editingKey)}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-45">
                   <SelectValue placeholder="Theme" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-52 h-52">
                   {availableKeys.map((key, index) => (
                     <SelectItem key={index} value={key}>
                       {key}

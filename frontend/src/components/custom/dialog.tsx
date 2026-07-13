@@ -5,7 +5,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  // DialogClose,
 } from "../ui/dialog";
 
 type dialogProps = {
@@ -18,8 +17,10 @@ type dialogProps = {
 const Dialog = ({ isOpen, title, description, content }: dialogProps) => {
   return (
     <ShadcnDialog open={isOpen} onOpenChange={() => {}}>
-      {/* <DialogClose} /> */}
-      <DialogContent>
+      <DialogContent
+        showCloseButton={false}
+        className="bg-zinc-900 text-primary-foreground border border-zinc-300"
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
