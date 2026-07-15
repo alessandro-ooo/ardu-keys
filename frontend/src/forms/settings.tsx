@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { availableKeys } from "@/lib/keys.ts";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type FormInputs = {
   ports: string[];
@@ -31,17 +32,46 @@ type SettingsProps = {
   data: FormInputs;
 };
 
+type COM_STATUS = {
+  status: undefined | boolean;
+};
+
 const SettingsForm = ({ data }: SettingsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingKey, setEditingKey] = useState<
     "kbdInputs.D2" | "kbdInputs.D3" | "kbdInputs.D4" | "kbdInputs.D5" | null
   >(null);
-  const [isConnectionEstablished, setIsConnectionEstablished] = useState(false);
+
+  const [isConnectionEstablished, setIsConnectionEstablished] =
+    useState<COM_STATUS>({ status: undefined });
 
   const showDialog = editingKey !== null;
 
   Events.On("com:isConnectionEstablished", (event) => {
-    setIsConnectionEstablished(event.data);
+    const newStatus = event.data;
+    // console.log(newStatus);
+    // if (!newStatus && isConnectionEstablished === undefined) {
+    //   toast.info("Connessione a " + data.currentCOMPort + " effettuata.", {
+    //     position: "top-center",
+    //   });
+    // }
+
+    // if (!newStatus && isConnectionEstablished) {
+    //   toast.info("Connessione a " + data.currentCOMPort + " interrotta.", {
+    //     position: "top-center",
+    //   });
+    // }
+
+    // if (!newStatus && !isConnectionEstablished) {
+    //   toast.info("Non è stato possibile connettersi a " + data.currentCOMPort, {
+    //     position: "top-center",
+    //   });
+
+    //   return;
+    // }
+
+    setIsConnectionEstablished(newStatus);
+    console.log(newStatus, getValues("currentCOMPort"));
   });
 
   const { handleSubmit, getValues, setValue, reset } = useForm<FormInputs>({
@@ -57,11 +87,10 @@ const SettingsForm = ({ data }: SettingsProps) => {
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
     setIsEditing(false);
     setEditingKey(null);
-    const selectedPort = getValues("ports");
+    const selectedPort = getValues("currentCOMPort");
 
     CloseConnection();
-    setValue("currentCOMPort", selectedPort.toString());
-    ConnectToCOM(selectedPort.toString());
+    ConnectToCOM(selectedPort);
     saveSettings.mutateAsync(JSON.stringify(data.kbdInputs));
   };
 
@@ -96,6 +125,9 @@ const SettingsForm = ({ data }: SettingsProps) => {
                 type="button"
                 variant="default"
                 onClick={() => {
+                  toast.info("Hai annullato le modifiche.", {
+                    position: "top-center",
+                  });
                   reset(data);
                   setIsEditing(false);
                   setEditingKey(null);
@@ -141,6 +173,7 @@ const SettingsForm = ({ data }: SettingsProps) => {
           {isEditing && (
             <Select
               onValueChange={(value) => {
+                console.log("vale:", value);
                 setValue("currentCOMPort", value);
               }}
             >
