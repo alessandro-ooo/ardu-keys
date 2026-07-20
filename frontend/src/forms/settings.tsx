@@ -148,21 +148,23 @@ const SettingsForm = ({ data }: SettingsProps) => {
           />
         </div>
 
-        <div className="flex flex-row gap-2 w-full items-center justify-center text-white">
-          <p>COM:</p> {!isEditing && <p>{getValues("currentCOMPort")}</p>}
+        <div className="flex flex-row gap-2 w-full items-center justify-center">
+          <p className="text-white">COM:</p>{" "}
+          {!isEditing && (
+            <p className="text-white">{getValues("currentCOMPort")}</p>
+          )}
           {isEditing && (
             <Select
               onValueChange={(value) => {
-                console.log("vale:", value);
                 setValue("currentCOMPort", value);
               }}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-45 text-white">
                 <SelectValue placeholder="COM" />
               </SelectTrigger>
-              <SelectContent className="max-h-52 h-52 text-white">
+              <SelectContent className="max-h-52 h-52">
                 {data.ports.map((port, index) => (
-                  <SelectItem className="text-white" key={index} value={port}>
+                  <SelectItem key={index} value={port}>
                     {port}
                   </SelectItem>
                 ))}
