@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 tasks:
   go:mod:tidy:
@@ -50,7 +50,7 @@ tasks:
       - sh: pnpm --version
         msg: "pnpm not found"
     cmds:
-      - pnpm install
+      - pnpm i
 
   install:frontend:deps:yarn:
     dir: frontend
@@ -83,7 +83,7 @@ tasks:
     cmds:
       - task: frontend:run
         vars:
-          SCRIPT: '{{if eq .DEV "true"}}build:dev{{else}}build{{end}}'
+          SCRIPT: '{{if eq .DEV "true"}}build{{else}}build{{end}}'
     env:
       PRODUCTION: '{{if eq .DEV "true"}}false{{else}}true{{end}}'
 
@@ -159,8 +159,6 @@ tasks:
           sed -E -i'' 's/class=\"btn\"/class=\"p-btn p-prim-col\"/g' "$INDEX_HTML" || true
         fi
 
-
-
   generate:bindings:
     label: generate:bindings (BUILD_FLAGS={{.BUILD_FLAGS}})
     summary: Generates bindings for the frontend
@@ -169,14 +167,14 @@ tasks:
     sources:
       - "**/*.[jt]s"
       - exclude: frontend/**/*
-      - frontend/bindings/**/*  # Rerun when switching between dev/production mode causes changes in output
+      - frontend/bindings/**/* # Rerun when switching between dev/production mode causes changes in output
       - "**/*.go"
       - go.mod
       - go.sum
     generates:
       - frontend/bindings/**/*
     cmds:
-      - wails3 generate bindings -f '{{.BUILD_FLAGS}}' -clean=true
+      - wails3 generate bindings -ts -f '{{.BUILD_FLAGS}}' -clean=true
 
   generate:icons:
     summary: Generates Windows `.ico` and Mac `.icns` from an image; on macOS, `-iconcomposerinput appicon.icon -macassetdir darwin` also produces `Assets.car` from a `.icon` file (skipped on other platforms).
@@ -210,7 +208,10 @@ tasks:
   frontend:dev:pnpm:
     dir: frontend
     cmds:
-      - pnpm dev --port {{.VITE_PORT}} --strictPort
+      - pnpm dev --host 127.0.0.1 --port {{.VITE_PORT}} --strictPort
+      # - pnpm dev --port {{.VITE_PORT}} --strictPort
+      # unless it's a bug, makes no sense at all since i didn't have to do it in the old versions.
+      # TODO: to be investigated and open a PR.
 
   frontend:dev:bun:
     dir: frontend
@@ -300,13 +301,13 @@ tasks:
   ios:run:device:
     summary: Build, install, and launch on a physical iPhone using Apple tools (xcodebuild/devicectl)
     vars:
-      PROJECT: '{{.PROJECT}}'   # e.g., build/ios/xcode/<YourProject>.xcodeproj
-      SCHEME: '{{.SCHEME}}'     # e.g., ios.dev
+      PROJECT: "{{.PROJECT}}" # e.g., build/ios/xcode/<YourProject>.xcodeproj
+      SCHEME: "{{.SCHEME}}" # e.g., ios.dev
       CONFIG: '{{.CONFIG | default "Debug"}}'
       DERIVED: '{{.DERIVED | default "build/ios/DerivedData"}}'
-      UDID: '{{.UDID}}'         # from `task ios:device:list`
-      BUNDLE_ID: '{{.BUNDLE_ID}}' # e.g., com.yourco.wails.ios.dev
-      TEAM_ID: '{{.TEAM_ID}}'   # optional, if your project is not already set up for signing
+      UDID: "{{.UDID}}" # from `task ios:device:list`
+      BUNDLE_ID: "{{.BUNDLE_ID}}" # e.g., com.yourco.wails.ios.dev
+      TEAM_ID: "{{.TEAM_ID}}" # optional, if your project is not already set up for signing
     preconditions:
       - sh: xcrun -f xcodebuild
         msg: "xcodebuild not found. Please install Xcode."
