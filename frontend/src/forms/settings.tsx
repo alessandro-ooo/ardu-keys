@@ -31,11 +31,6 @@ type FormInputs = {
 type SettingsProps = {
   data: FormInputs;
 };
-
-type COM_STATUS = {
-  status: undefined | boolean;
-};
-
 const SettingsForm = ({ data }: SettingsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingKey, setEditingKey] = useState<
@@ -43,35 +38,13 @@ const SettingsForm = ({ data }: SettingsProps) => {
   >(null);
 
   const [isConnectionEstablished, setIsConnectionEstablished] =
-    useState<COM_STATUS>({ status: undefined });
+    useState<boolean>(false);
 
   const showDialog = editingKey !== null;
 
   Events.On("com:isConnectionEstablished", (event) => {
     const newStatus = event.data;
-    // console.log(newStatus);
-    // if (!newStatus && isConnectionEstablished === undefined) {
-    //   toast.info("Connessione a " + data.currentCOMPort + " effettuata.", {
-    //     position: "top-center",
-    //   });
-    // }
-
-    // if (!newStatus && isConnectionEstablished) {
-    //   toast.info("Connessione a " + data.currentCOMPort + " interrotta.", {
-    //     position: "top-center",
-    //   });
-    // }
-
-    // if (!newStatus && !isConnectionEstablished) {
-    //   toast.info("Non è stato possibile connettersi a " + data.currentCOMPort, {
-    //     position: "top-center",
-    //   });
-
-    //   return;
-    // }
-
     setIsConnectionEstablished(newStatus);
-    console.log(newStatus, getValues("currentCOMPort"));
   });
 
   const { handleSubmit, getValues, setValue, reset } = useForm<FormInputs>({
@@ -80,17 +53,24 @@ const SettingsForm = ({ data }: SettingsProps) => {
 
   const saveSettings = useMutation({
     mutationFn: async (data: string) => {
-      await SaveSettings(data);
+      await SaveSettings(data).catch((error: Error) => {
+        toast.error(error.message, { position: "top-center" });
+      });
     },
   });
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     setIsEditing(false);
     setEditingKey(null);
     const selectedPort = getValues("currentCOMPort");
 
     CloseConnection();
-    ConnectToCOM(selectedPort);
+    await ConnectToCOM(selectedPort).catch((error: Error) => {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    });
+
     saveSettings.mutateAsync(JSON.stringify(data.kbdInputs));
   };
 
