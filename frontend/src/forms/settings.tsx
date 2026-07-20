@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { availableKeys } from "@/lib/keys.ts";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type FormInputs = {
   ports: string[];
@@ -30,18 +31,20 @@ type FormInputs = {
 type SettingsProps = {
   data: FormInputs;
 };
-
 const SettingsForm = ({ data }: SettingsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingKey, setEditingKey] = useState<
     "kbdInputs.D2" | "kbdInputs.D3" | "kbdInputs.D4" | "kbdInputs.D5" | null
   >(null);
-  const [isConnectionEstablished, setIsConnectionEstablished] = useState(false);
+
+  const [isConnectionEstablished, setIsConnectionEstablished] =
+    useState<boolean>(false);
 
   const showDialog = editingKey !== null;
 
   Events.On("com:isConnectionEstablished", (event) => {
-    setIsConnectionEstablished(event.data);
+    const newStatus = event.data;
+    setIsConnectionEstablished(newStatus);
   });
 
   const { handleSubmit, getValues, setValue, reset } = useForm<FormInputs>({
@@ -50,18 +53,24 @@ const SettingsForm = ({ data }: SettingsProps) => {
 
   const saveSettings = useMutation({
     mutationFn: async (data: string) => {
-      await SaveSettings(data);
+      await SaveSettings(data).catch((error: Error) => {
+        toast.error(error.message, { position: "top-center" });
+      });
     },
   });
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     setIsEditing(false);
     setEditingKey(null);
-    const selectedPort = getValues("ports");
+    const selectedPort = getValues("currentCOMPort");
 
     CloseConnection();
-    setValue("currentCOMPort", selectedPort.toString());
-    ConnectToCOM(selectedPort.toString());
+    await ConnectToCOM(selectedPort).catch((error: Error) => {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    });
+
     saveSettings.mutateAsync(JSON.stringify(data.kbdInputs));
   };
 
@@ -96,6 +105,9 @@ const SettingsForm = ({ data }: SettingsProps) => {
                 type="button"
                 variant="default"
                 onClick={() => {
+                  toast.info("Hai annullato le modifiche.", {
+                    position: "top-center",
+                  });
                   reset(data);
                   setIsEditing(false);
                   setEditingKey(null);
@@ -136,20 +148,23 @@ const SettingsForm = ({ data }: SettingsProps) => {
           />
         </div>
 
-        <div className="flex flex-row gap-2 w-full items-center justify-center text-white">
-          <p>COM:</p> {!isEditing && <p>{getValues("currentCOMPort")}</p>}
+        <div className="flex flex-row gap-2 w-full items-center justify-center">
+          <p className="text-white">COM:</p>{" "}
+          {!isEditing && (
+            <p className="text-white">{getValues("currentCOMPort")}</p>
+          )}
           {isEditing && (
             <Select
               onValueChange={(value) => {
                 setValue("currentCOMPort", value);
               }}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-45 text-white">
                 <SelectValue placeholder="COM" />
               </SelectTrigger>
-              <SelectContent className="max-h-52 h-52 text-white">
+              <SelectContent className="max-h-52 h-52">
                 {data.ports.map((port, index) => (
-                  <SelectItem className="text-white" key={index} value={port}>
+                  <SelectItem key={index} value={port}>
                     {port}
                   </SelectItem>
                 ))}

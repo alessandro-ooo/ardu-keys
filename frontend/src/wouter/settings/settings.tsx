@@ -5,13 +5,25 @@ import {
 } from "../../../bindings/ardu-keys/services/COM/comservice";
 import { GetSettings } from "../../../bindings/ardu-keys/services/settings/settingsservice";
 import SettingsForm from "../../forms/settings";
+import { toast } from "sonner";
 
 const Settings = () => {
   const { data: ports, status: portsStatus } = useQuery({
     queryKey: ["ListCOMPorts"],
     queryFn: async () => {
-      const ports = await ListCOMPorts();
-      const currentCOMPort = await GetCurrentCOMPortName();
+      const ports = await ListCOMPorts().catch((error: Error) => {
+        toast.error(error.message, { position: "top-center" });
+        return [];
+      });
+      const currentCOMPort = await GetCurrentCOMPortName().catch(
+        (error: Error) => {
+          toast.error(error.message, {
+            position: "top-center",
+            className: "bg-red-500",
+          });
+          return "";
+        },
+      );
 
       /* 
         For future references, here is an explaination of why I had to use structuredClone:
@@ -24,14 +36,17 @@ const Settings = () => {
         - Atterpac (wails3 maintainer)
       */
 
-      const kbdInputs = structuredClone(await GetSettings());
+      const kbdInputs = structuredClone(
+        await GetSettings().catch((error: Error) => {
+          toast.error(error.message, { position: "top-center" });
+          return { D2: "0", D3: "0", D4: "0", D5: "0" };
+        }),
+      );
       return { ports, currentCOMPort, kbdInputs };
     },
   });
 
   const hasFetched = portsStatus === "success";
-
-  console.log("fetc data", ports);
 
   return (
     <div className="">

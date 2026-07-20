@@ -87,18 +87,14 @@ func main() {
 	// this will find a COM port, more doc in the function.
 	port, _ := comService.FindCOMPortAutomatically();
 	comService.ConnectToCOM(port);
-
 	// this gets the settings. 
-	settings, settingsErr := settingsService.GetSettings();
+	settings, _ := settingsService.GetSettings();
 
-	if settingsErr == nil {
-		// TODO: must handle in case of error
-		go func() {
-			for {
-				comService.ReadData(settings.D2, settings.D3, settings.D4, settings.D5);
-			}
-		}()
-	}
+	go func() {
+		for {
+			comService.ReadData(settings.D2, settings.D3, settings.D4, settings.D5);
+		}
+	}()
 
 	// this routine emits the connection status to the frontend
   go func() {
@@ -112,7 +108,6 @@ func main() {
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()
-
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {
 		log.Fatal(err)

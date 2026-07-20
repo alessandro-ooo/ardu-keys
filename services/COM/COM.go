@@ -2,7 +2,6 @@ package COM
 
 import (
 	"bufio"
-	"fmt"
 	"strings"
 
 	// "github.com/go-vgo/robotgo"
@@ -20,11 +19,11 @@ type COMService struct {
 	portName string;
 }
 
-func (c *COMService) ListCOMPorts() []string {
+func (c *COMService) ListCOMPorts() ([]string, error){
 	ports, err := enumerator.GetDetailedPortsList();
 
 	if err != nil {
-		panic("[ERROR WHILE LISTING PORTS]: " + err.Error())
+		return nil, err;
 	}
 
 	returnedPorts := []string{};
@@ -33,21 +32,20 @@ func (c *COMService) ListCOMPorts() []string {
 		returnedPorts = append(returnedPorts, port.Name)
 	}
 
-	return returnedPorts;
+	return returnedPorts, nil;
 }
 
 func (c *COMService) GetCurrentCOMPortName() string { return c.portName }
 
 func (c *COMService) FindCOMPortAutomatically() (string, error) {
 	// This function will attempt to find the COM port that the Elegoo Uno R3 is connected to by checking the VID and PID of the connected devices.
-	// TODO: This is panicking if the COM port is not found. Must not panic and return a message to prompt the user to:
 	// 	1. Connect the device
 	// 	2. Manually select the COM port.
 
 	ports, err := enumerator.GetDetailedPortsList();
 
 	if err != nil {
-		panic("[ERROR WHILE LISTING PORTS]: " + err.Error())
+		return "", err;
 	}
 
 	for _, port := range ports {
@@ -63,7 +61,7 @@ func (c *COMService) FindCOMPortAutomatically() (string, error) {
 	return "", nil
 }
 
-func (c *COMService) ConnectToCOM(port string) {
+func (c *COMService) ConnectToCOM(port string) (error) {
 
 	// reset connection state
 	c.isConnectionEstablished = false
@@ -79,15 +77,15 @@ func (c *COMService) ConnectToCOM(port string) {
 	c.portName = port;
 
 	if err != nil {
-		fmt.Printf("Failed to open %s: %v\n", port, err)
 		c.isConnectionEstablished = false;
-		return;
+		return err;
 	}
 
 	// Data must be buffered because it's sent in chunks (data is in streams).
 	reader := bufio.NewReader(serialPort)
 	c.reader = reader
 	c.isConnectionEstablished = true;
+	return nil;
 }
 
 func (c *COMService) ReadData(d2, d3, d4, d5 string) {
