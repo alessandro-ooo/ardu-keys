@@ -48,8 +48,6 @@ const Settings = () => {
 
   const hasFetched = portsStatus === "success";
 
-  console.log("fetc data", ports);
-
   return (
     <div className="">
       {!hasFetched && <p>Loading...</p>}
