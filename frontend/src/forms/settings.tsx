@@ -85,27 +85,27 @@ const SettingsForm = ({ data }: SettingsProps) => {
             <h1 className="text-2xl text-white">Ardu-keys</h1>{" "}
             <Bulb status={isConnectionEstablished ? "green" : "red"} />
           </div>{" "}
-          <p className="text-sm text-zinc-400">Configurazione tasti fisici</p>
+          <p className="text-sm text-zinc-400">Physical keys configuration</p>
         </div>
 
         <div>
           {!isEditing && (
             <Button variant="default" onClick={() => setIsEditing(true)}>
-              Modifica associazione
+              Edit mapping
             </Button>
           )}
 
           {isEditing && (
             <div className="flex flex-row gap-2">
               <Button type="submit" variant="default">
-                Salva modifiche
+                Save changes
               </Button>
 
               <Button
                 type="button"
                 variant="default"
                 onClick={() => {
-                  toast.info("Hai annullato le modifiche.", {
+                  toast.info("Changes discarded.", {
                     position: "top-center",
                   });
                   reset(data);
@@ -113,7 +113,7 @@ const SettingsForm = ({ data }: SettingsProps) => {
                   setEditingKey(null);
                 }}
               >
-                Annulla modifiche
+                Discard changes
               </Button>
             </div>
           )}
@@ -177,7 +177,7 @@ const SettingsForm = ({ data }: SettingsProps) => {
       <Dialog
         isOpen={showDialog}
         title="Settings"
-        description={`Configura il tasto ${editingKey}`}
+        description={`Configure ${editingKey?.split(".")[1]} key`}
         content={
           editingKey ? (
             <div className="flex flex-col gap-4">
