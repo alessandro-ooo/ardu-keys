@@ -6,6 +6,7 @@ import {
 import { GetSettings } from "../../../bindings/ardu-keys/services/settings/settingsservice";
 import SettingsForm from "../../forms/settings";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 const Settings = () => {
   const { data: ports, status: portsStatus } = useQuery({
@@ -47,10 +48,15 @@ const Settings = () => {
   });
 
   const hasFetched = portsStatus === "success";
+  const isPending = portsStatus === "pending";
 
   return (
     <div className="">
-      {!hasFetched && <p>Loading...</p>}
+      {isPending && (
+        <div className="flex justify-center items-center h-dvh">
+          <Spinner className="text-white size-18" />
+        </div>
+      )}
       {hasFetched && <SettingsForm data={ports} />}
     </div>
   );
