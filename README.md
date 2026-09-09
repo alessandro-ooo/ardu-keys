@@ -1,59 +1,54 @@
-# Welcome to Your New Wails3 Project!
+# Ardu keys
 
-Congratulations on generating your Wails3 application! This README will guide you through the next steps to get your project up and running.
+## Overview
+This is a low-cost(*) macro keyboard made with an Arduino Uno R3, four mechanical switches on a printed PCB and a 3D printed case, then handled by a software made with wails where it's possible to change what the physical key will trigger. Under no circumstances has to be considered a "final" product and its only purpose is to recycle an unused Arduino board and experiment with something new. For more information consult the LICENSE.md.
 
-## Getting Started
+(*) prices may vary from your region and/or if you have the board already, if you own or not a 3D printer, and the local prices for everything.
 
-1. Navigate to your project directory in the terminal.
+### Table of contents
+1. Software
+2. Electronics
 
-2. To run your application in development mode, use the following command:
 
-   ```
-   wails3 dev
-   ```
+## 1. Software
 
-   This will start your application and enable hot-reloading for both frontend and backend changes.
+<p align="center">
+   <kbd><img src="https://i.imgur.com/8AdMxWA.png" alt="SW"></kbd>
+</p>
 
-3. To build your application for production, use:
+The software is pretty much focused on this page, with a slight difference when editing the mapping of your keys. The bulb on the top left, indicates you if it's connected to the COM, or not. GREEN is connected, RED is disconnected. The way the software works, is that it automatically detects if the board is connected or not upon launching the software; if not, you can connect it into "edit mapping". To know why it works this way, check FOR_DEVELOPERS.md.
 
-   ```
-   wails3 build
-   ```
+<p align="center">
+   <kbd><img src="https://i.imgur.com/vbj7n7o.png" alt="SW"></kbd>
+</p>
 
-   This will create a production-ready executable in the `build` directory.
+By clicking "edit mapping", the keycaps will be highlighted and the COM will be selectable; discard changes will not save any changes you made, save changes will save and apply them. If you changed the COM, the software will connect to it unless it's "busy".
 
-## Exploring Wails3 Features
+<p align="center">
+   <kbd><img src="https://i.imgur.com/OCum08H.png" alt="SW"></kbd>
+</p>
 
-Now that you have your project set up, it's time to explore the features that Wails3 offers:
+If you click on a keycap, you'll be prompted to select which key it has to trigger. You can find a complete list at LIST_OF_KEYS.md
 
-1. **Check out the examples**: The best way to learn is by example. Visit the `examples` directory in the `v3/examples` directory to see various sample applications.
+### Note
+Some softwares may NOT detect the key pressed because of missing administrator privileges, so it's advised to always run it as administrator. Others instead, even if all the keys are considered as valid might decide to not detect keys over F12 (from F13 to F24) OR detect them and consider it as cheating, but it's a rare thing and most just decide to ignore the input.
+Known softwares where it's required to run as administrator: teamspeak3.
 
-2. **Run an example**: To run any of the examples, navigate to the example's directory and use:
+## 2. Electronics
+The circuit uses the Arduino Uno R3 Pin header connector, specifically the d2, d3, d4, d6 and GND pins, that are connected with the board through a female socket wired with jumper wire (CLICK HERE TO CHECK THE WIRING).
 
-   ```
-   go run .
-   ```
+### 2.1 Schematic 
+The PCB makes use of four switches and a female 01_05 connector, four for the digital inputs and one for the ground. A note: The ground could have been handled differently, but this is a first time and self-taught project with PCBs and mistakes are totally allowed.
 
-   Note: Some examples may be under development during the alpha phase.
+<p align="center">
+   <kbd><img src="https://i.imgur.com/2BZTXVE.png" alt="SW"></kbd>
+</p>
 
-3. **Explore the documentation**: Visit the [Wails3 documentation](https://v3.wails.io/) for in-depth guides and API references.
+The wiring is basically this:
 
-4. **Join the community**: Have questions or want to share your progress? Join the [Wails Discord](https://discord.gg/JDdSxwjhGf) or visit the [Wails discussions on GitHub](https://github.com/wailsapp/wails/discussions).
-
-## Project Structure
-
-Take a moment to familiarize yourself with your project structure:
-
-- `frontend/`: Contains your frontend code (HTML, CSS, JavaScript/TypeScript)
-- `main.go`: The entry point of your Go backend
-- `app.go`: Define your application structure and methods here
-- `wails.json`: Configuration file for your Wails project
-
-## Next Steps
-
-1. Modify the frontend in the `frontend/` directory to create your desired UI.
-2. Add backend functionality in `main.go`.
-3. Use `wails3 dev` to see your changes in real-time.
-4. When ready, build your application with `wails3 build`.
-
-Happy coding with Wails3! If you encounter any issues or have questions, don't hesitate to consult the documentation or reach out to the Wails community.
+```
+Arduino Uno D2 ──[internal pull-up]── PCB D2 ── SW1 ── GND
+Arduino Uno D3 ──[internal pull-up]── PCB D3 ── SW2 ── GND
+Arduino Uno D4 ──[internal pull-up]── PCB D4 ── SW3 ── GND
+Arduino Uno D5 ──[internal pull-up]── PCB D5 ── SW4 ── GND
+```
