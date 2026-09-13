@@ -6,7 +6,7 @@ This is a low-cost(*) macro keyboard made with an Arduino Uno R3, four mechanica
 (*) prices may vary from your region and/or if you have the board already, if you own or not a 3D printer, and the local prices for everything.
 
 ### Table of contents
-1. Software
+1. [Software](#software)
 2. Electronics
 3. 3D Printed case/container
 
@@ -16,7 +16,7 @@ This is a low-cost(*) macro keyboard made with an Arduino Uno R3, four mechanica
    <kbd><img src="https://i.imgur.com/8AdMxWA.png" alt="SW"></kbd>
 </p>
 
-The software is pretty much focused on this page, with a slight difference when editing the mapping of your keys. The bulb on the top left, indicates you if it's connected to the COM, or not. GREEN is connected, RED is disconnected. The way the software works, is that it automatically detects if the board is connected or not upon launching the software; if not, you can connect it into "edit mapping". To know why it works this way, check FOR_DEVELOPERS.md.
+The software is pretty much focused on this page, with a slight difference when editing the mapping of your keys. The bulb on the top left, indicates you if it's connected to the COM, or not. GREEN is connected, RED is disconnected. The way the software works, is that it automatically detects if the board is connected or not upon launching the software; if not, you can connect it into "edit mapping".
 
 <p align="center">
    <kbd><img src="https://i.imgur.com/vbj7n7o.png" alt="SW"></kbd>
@@ -35,7 +35,7 @@ Some softwares may NOT detect the key pressed because of missing administrator p
 Known softwares where it's required to run as administrator: teamspeak3.
 
 ## 2. Electronics
-The circuit uses the Arduino Uno R3 Pin header connector, specifically the d2, d3, d4, d6 and GND pins, that are connected with the board through a female socket wired with jumper wire (CLICK HERE TO CHECK THE WIRING).
+The circuit uses the Arduino Uno R3 Pin header connector, specifically the d2, d3, d4, d6 and GND pins, that are connected with the board through a female socket wired with jumper wire.
 
 ### 2.1 Schematic 
 The PCB makes use of four switches and a female 01_05 connector, four for the digital inputs and one for the ground. A note: The ground could have been handled differently, but this is a first time and self-taught project with PCBs and mistakes are totally allowed.
@@ -131,4 +131,9 @@ Configuration
 ```
 
 ## 5. Bill of Materials and files to send for printing.
+In [the release page](https://github.com/alessandro-ooo/ardu-keys/releases) you can find a Bill of Materials, the PCB layout files and the .obj to use in the 3D printer (or give it to whoever will 3D print it for you).
 
+I've used [PCBWay](pcbway.com) to print the PCB, all you have to do is send them the `BOM.xmls` and the `Ardukeys PCB.zip`, and to print the case you will have to use `AK-CASE FINAL.obj`. Note that the project is made using millimeters, and if you're outsourcing the printing it's a good thing if you let them know to avoid printing errors such as converting 120mm to centimeters (1,2m).
+
+## 6. Personal considerations
+Through the development and design of the project I have learnt-by-doing the schematics and the PCB layout, and being a project to recycle an unused arduino board, I had to adapt everything to it. Clearly the PCB could have been better (for example, the GND could have been handled way different), but what's important is that I have learned new skills.
