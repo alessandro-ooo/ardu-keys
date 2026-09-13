@@ -1,4 +1,5 @@
 # Ardu keys
+Project made using golang with wails for the desktop application, vite with react on the frontend. KiCAD was used for the schematic and the PCB Layout, Fusion360 for the 3D project.
 
 ## Overview
 This is a low-cost(*) macro keyboard made with an Arduino Uno R3, four mechanical switches on a printed PCB and a 3D printed case, then handled by a software made with wails where it's possible to change what the physical key will trigger. Under no circumstances has to be considered a "final" product and its only purpose is to recycle an unused Arduino board and experiment with something new. For more information consult the LICENSE.md.
@@ -144,5 +145,7 @@ In [the release page](https://github.com/alessandro-ooo/ardu-keys/releases) you 
 
 I've used [PCBWay](pcbway.com) to print the PCB, all you have to do is send them the `BOM.xmls` and the `Ardukeys PCB.zip`, and to print the case you will have to use `AK-CASE FINAL.obj`. Note that the project is made using millimeters, and if you're outsourcing the printing it's a good thing if you let them know to avoid printing errors such as converting 120mm to centimeters (1,2m).
 
+Once you connect the board to the computer, flash `ardukeys-flashme.cpp` either using the Arduino IDE or PlatformIO (plugin for VSCode). 
+
 ## 6. Personal considerations
-Through the development and design of the project I have learnt-by-doing the schematics and the PCB layout, and being a project to recycle an unused arduino board, I had to adapt everything to it. Clearly the PCB could have been better (for example, the GND could have been handled way different), but what's important is that I have learned new skills.
+Through the development and design of the project I have learnt-by-doing the schematics and the PCB layout, and being a project to recycle an unused arduino board, I had to adapt everything to it, even the case that I had to learn how to design on a CAD software and have it printed. Clearly the PCB could have been better (for example, the GND could have been handled way different), but what's important is that I have learned new skills.
