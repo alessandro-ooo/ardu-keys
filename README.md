@@ -8,7 +8,7 @@ This is a low-cost(*) macro keyboard made with an Arduino Uno R3, four mechanica
 ### Table of contents
 1. Software
 2. Electronics
-
+3. 3D Printed case/container
 
 ## 1. Software
 
@@ -52,3 +52,83 @@ Arduino Uno D3 ──[internal pull-up]── PCB D3 ── SW2 ── GND
 Arduino Uno D4 ──[internal pull-up]── PCB D4 ── SW3 ── GND
 Arduino Uno D5 ──[internal pull-up]── PCB D5 ── SW4 ── GND
 ```
+
+### 2.2 PCB Layout
+
+The PCB layout is four mechanical switches lined up to the center and the female connector to the side. The switches have enough space to install standard keycaps on them without having spacing issues.
+The switches use the `SW_Cherry_MX_1.00u_PCB`  footprint, and the socket uses `PinSocket_1x05_P2.54mm_Vertical` footprint. They're all soldered THT.
+
+<p align="center">
+   <kbd><img src="https://i.imgur.com/2hteqgB.png" alt="SW"></kbd>
+</p>
+
+Each switch has a track for the GND; which I later found out it's possible to make it in a better way. The layout is 41.55x95.55mm with 2 layers.
+
+## 3. Keyboard case/container
+This project also contains a first attempt to CAD designing and 3D printing (outsourced to a local business) to contain both boards. The container itself is designed to hold and protect the boards, no quirky design intended.
+
+
+<p align="center">
+   <kbd><img src="https://i.imgur.com/16qlJk6.png" alt="SW"></kbd>
+</p>
+
+### 3.1 Base
+To the left, there is the base that holds both boards. It's a simple 127mm x 122mm and 15mm tall with holding holes for both boards. Note: For the R3 board I've used M3 holes, for the printed PCB M2 holes, but after the printing I had to use M2.6 and M1.4 screws. Base without boards for reference:
+
+<p align="center">
+   <kbd><img src="https://i.imgur.com/38ffohM.png" alt="SW"></kbd>
+</p>
+
+The outer holes are to hold the two printed pieces together.
+
+### 3.2 Top
+
+To the right there is the "top" of the case/container. The shape is made this way to allow space for the jumper wires to be inserted without causing "pressure" to the circuit and eventually damage the wiring or the components. For reference:
+
+<p align="center">
+   <kbd><img src="https://i.imgur.com/jsnFz86.png" alt="SW"></kbd>
+</p>
+
+The hole to the side is to allow the R3's USB to be used, it's how the board is alimented. 
+
+### 3.3 What it should look like while mounting
+
+<p align="center">
+   <kbd><img src="https://i.imgur.com/QrSCdYj.jpeg" alt="SW"></kbd>
+</p>
+
+This is how the boards look when screwed to the base
+
+<p align="center">
+   <kbd><img src="https://i.imgur.com/Qy4sp7N.png" alt="SW"></kbd>
+</p>
+
+This is how it should be looking when the top is on the base (at the moment of the photo, not screwed to the base).
+
+## 4.Project Architecture
+
+```
+Hardware 
+   │
+   │ Serial communication 
+   ↓ 
+Arduino Firmware 
+   │ 
+   │ Switch event 
+   ↓ 
+Wails Backend 
+   │ 
+   │ "Listens" to the serial monitor 
+   ↓ 
+Virtual Keyboard Input based on the serial monitor's message
+   ↑ 
+   │ 
+Frontend 
+   │ 
+   │ 
+Configuration 
+   └──────────────→ Key Mappings
+```
+
+## 5. Bill of Materials and files to send for printing.
+
