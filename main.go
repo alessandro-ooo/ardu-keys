@@ -40,7 +40,7 @@ func main() {
 	// 'Mac' options tailor the application when running an macOS.
 	app := application.New(application.Options{
 		Name:        "ardu-keys",
-		Description: "A demo of using raw HTML & CSS",
+		Description: "",
 		Services: []application.Service{
 			application.NewService(comService),
 			application.NewService(settingsService),
@@ -60,7 +60,7 @@ func main() {
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title: "Window 1",
+		Title: "Ardu-keys",
 		Width: 800,
 		Height: 350,
 		Mac: application.MacWindow{
@@ -87,11 +87,11 @@ func main() {
 	// this will find a COM port, more doc in the function.
 	port, _ := comService.FindCOMPortAutomatically();
 	comService.ConnectToCOM(port);
-	// this gets the settings. 
-	settings, _ := settingsService.GetSettings();
 
 	go func() {
 		for {
+			// this gets the settings. 
+			settings, _ := settingsService.GetSettings();
 			comService.ReadData(settings.D2, settings.D3, settings.D4, settings.D5);
 		}
 	}()
