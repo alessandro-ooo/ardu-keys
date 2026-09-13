@@ -1,4 +1,8 @@
 # Ardu keys
+<p align="center">
+   <kbd><img src="https://i.imgur.com/EWz42bv.png" alt="SW"></kbd>
+</p>
+
 Project made using golang with [wails](https://wails.io/) for the desktop application, vite with react on the frontend. KiCAD was used for the schematic and the PCB Layout, Fusion360 for the 3D project.
 
 ## Overview
