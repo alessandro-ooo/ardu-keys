@@ -6,9 +6,18 @@ This is a low-cost(*) macro keyboard made with an Arduino Uno R3, four mechanica
 (*) prices may vary from your region and/or if you have the board already, if you own or not a 3D printer, and the local prices for everything.
 
 ### Table of contents
-1. [Software](#software)
-2. Electronics
-3. 3D Printed case/container
+
+1. [Software](#1-software)
+2. [Electronics](#2-electronics)
+   1. [Schematic](#21-schematic)
+   2. [PCB Layout](#22-pcb-layout)
+3. [Keyboard case/container](#3-keyboard-casecontainer)
+   1. [Base](#31-base)
+   2. [Top](#32-top)
+   3. [What it should look like while mounting](#33-what-it-should-look-like-while-mounting)
+4. [Project Architecture](#4-project-architecture)
+5. [Bill of Materials and files to send for printing](#5-bill-of-materials-and-files-to-send-for-printing)
+6. [Personal considerations](#6-personal-considerations)
 
 ## 1. Software
 
@@ -105,7 +114,7 @@ This is how the boards look when screwed to the base
 
 This is how it should be looking when the top is on the base (at the moment of the photo, not screwed to the base).
 
-## 4.Project Architecture
+## 4. Project Architecture
 
 ```
 Hardware 
