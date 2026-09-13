@@ -52,7 +52,7 @@ Known softwares where it's required to run as administrator: teamspeak3.
 The circuit uses the Arduino Uno R3 Pin header connector, specifically the d2, d3, d4, d6 and GND pins, that are connected with the board through a female socket wired with jumper wire.
 
 ### 2.1 Schematic 
-The PCB makes use of four switches and a female 01_05 connector, four for the digital inputs and one for the ground. A note: The ground could have been handled differently, but this is a first time and self-taught project with PCBs and mistakes are totally allowed.
+The PCB makes use of four switches and a female 01_05 connector, four for the digital inputs and one for the ground.
 
 <p align="center">
    <kbd><img src="https://i.imgur.com/2BZTXVE.png" alt="SW"></kbd>
