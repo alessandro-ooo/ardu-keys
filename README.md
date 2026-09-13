@@ -1,5 +1,5 @@
 # Ardu keys
-Project made using golang with wails for the desktop application, vite with react on the frontend. KiCAD was used for the schematic and the PCB Layout, Fusion360 for the 3D project.
+Project made using golang with [wails](https://wails.io/) for the desktop application, vite with react on the frontend. KiCAD was used for the schematic and the PCB Layout, Fusion360 for the 3D project.
 
 ## Overview
 This is a low-cost(*) macro keyboard made with an Arduino Uno R3, four mechanical switches on a printed PCB and a 3D printed case, then handled by a software made with wails where it's possible to change what the physical key will trigger. Under no circumstances has to be considered a "final" product and its only purpose is to recycle an unused Arduino board and experiment with something new. For more information consult the LICENSE.md.
