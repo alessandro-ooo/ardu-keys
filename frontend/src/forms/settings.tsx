@@ -64,7 +64,7 @@ const SettingsForm = ({ data }: SettingsProps) => {
     setEditingKey(null);
     const selectedPort = getValues("currentCOMPort");
 
-    CloseConnection();
+    await CloseConnection();
     await ConnectToCOM(selectedPort).catch((error: Error) => {
       toast.error(error.message, {
         position: "top-center",
@@ -205,7 +205,7 @@ const SettingsForm = ({ data }: SettingsProps) => {
 
               <div className="flex flex-row gap-2">
                 <Button variant="default" onClick={() => setEditingKey(null)}>
-                  Chiudi
+                  Close
                 </Button>
               </div>
             </div>
