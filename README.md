@@ -1,4 +1,11 @@
 # Ardu keys
+<p align="center">Built with</p>
+<p align="center"> 
+   <a href="https://wails.io">
+<img src="https://wails.io/img/wails-button-dark.svg" width="90" height="24" alt="Built with Wails">
+</a>
+</p>
+
 <p align="center">
    <img src="https://i.imgur.com/EWz42bv.png" alt="SW">
 </p>
